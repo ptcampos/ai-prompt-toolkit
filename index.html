@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Prompt Toolkit para Devs & Criadores</title>
+  <style>
+    :root {
+      --bg: #0a0b12;
+      --bg-2: #0f1220;
+      --card: #111425;
+      --text: #e8eaf6;
+      --muted: #a8b0d3;
+      --accent-1: #7c4dff;
+      --accent-2: #4fc3f7;
+      --accent-3: #00e5ff;
+      --success: #00c853;
+      --shadow: 0 10px 30px rgba(0,0,0,0.35);
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: "Space Grotesk", "Sora", "Poppins", system-ui, -apple-system, Segoe UI, sans-serif;
+      background: radial-gradient(1200px 800px at 80% -10%, rgba(124,77,255,0.25), transparent),
+                  radial-gradient(900px 700px at 10% 10%, rgba(79,195,247,0.2), transparent),
+                  var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(14px);
+      background: rgba(10,11,18,0.6);
+      border-bottom: 1px solid rgba(124,77,255,0.1);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 0;
+    }
+
+    .logo {
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-badge {
+      display: inline-grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+      box-shadow: var(--shadow);
+      font-size: 18px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 18px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .hero {
+      padding: 84px 0 40px;
+      position: relative;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 40px;
+      align-items: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      gap: 10px;
+      align-items: center;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(124,77,255,0.15);
+      color: #cbb8ff;
+      font-size: 12px;
+      letter-spacing: 0.3px;
+      border: 1px solid rgba(124,77,255,0.3);
+    }
+
+    h1 {
+      font-size: clamp(34px, 4vw, 54px);
+      margin: 18px 0 12px;
+      line-height: 1.1;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 18px;
+      margin-bottom: 24px;
+    }
+
+    .cta-row {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 22px;
+      border-radius: 12px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+      color: white;
+      box-shadow: 0 14px 30px rgba(124,77,255,0.35);
+    }
+
+    .btn-primary:hover { transform: translateY(-2px); }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .hero-card {
+      background: linear-gradient(180deg, rgba(17,20,37,0.9), rgba(10,11,18,0.9));
+      border: 1px solid rgba(124,77,255,0.2);
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-card::after {
+      content: "";
+      position: absolute;
+      inset: -40% 20% auto auto;
+      width: 240px;
+      height: 240px;
+      background: radial-gradient(circle, rgba(79,195,247,0.35), transparent 60%);
+      opacity: 0.8;
+      pointer-events: none;
+    }
+
+    .stat {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .stat strong { color: var(--text); }
+
+    .counter {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 20px;
+      color: #fff;
+    }
+
+    section { padding: 70px 0; }
+
+    .section-title {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .section-subtitle { color: var(--muted); }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 32px;
+    }
+
+    .feature-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 20px;
+      border: 1px solid rgba(124,77,255,0.15);
+      min-height: 140px;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .feature-card:hover { transform: translateY(-4px); border-color: rgba(124,77,255,0.4); }
+
+    .feature-card h3 {
+      margin: 12px 0 6px;
+      font-size: 18px;
+    }
+
+    .testimonials {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 30px;
+    }
+
+    .testimonial {
+      background: rgba(17,20,37,0.9);
+      border-radius: var(--radius);
+      padding: 20px;
+      border: 1px solid rgba(79,195,247,0.15);
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .pricing {
+      background: linear-gradient(135deg, rgba(124,77,255,0.12), rgba(79,195,247,0.12));
+      border-radius: 24px;
+      padding: 36px;
+      border: 1px solid rgba(124,77,255,0.2);
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .price {
+      font-size: 42px;
+      font-weight: 700;
+    }
+
+    .price small {
+      color: var(--muted);
+      font-size: 16px;
+      text-decoration: line-through;
+      margin-left: 8px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(0,200,83,0.15);
+      color: #7dffb3;
+      font-size: 12px;
+      border: 1px solid rgba(0,200,83,0.3);
+    }
+
+    .faq {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+      margin-top: 30px;
+    }
+
+    .faq-item {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 18px;
+      border: 1px solid rgba(124,77,255,0.15);
+    }
+
+    .footer {
+      padding: 40px 0;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      color: var(--muted);
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 900px) {
+      .hero-grid, .pricing { grid-template-columns: 1fr; }
+      .grid-3, .testimonials { grid-template-columns: 1fr; }
+      .faq { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="container nav-inner">
+      <div class="logo">
+        <span class="logo-badge">✨</span>
+        AI Prompt Toolkit
+      </div>
+      <div class="nav-links">
+        <a href="#features">Recursos</a>
+        <a href="#proof">Depoimentos</a>
+        <a href="#pricing">Preço</a>
+        <a href="#faq">FAQ</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="container hero-grid">
+      <div class="reveal">
+        <span class="badge">Nova coleção • Atualizações mensais</span>
+        <h1>O arsenal premium de prompts para Devs & Criadores que querem resultados rápidos.</h1>
+        <p class="subtitle">Mais de 500+ prompts prontos para acelerar código, conteúdo e negócios. Economize horas, entregue mais e eleve sua qualidade com instruções profissionais.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#pricing">Garantir meu acesso</a>
+          <a class="btn btn-outline" href="#features">Ver categorias</a>
+          <span class="counter">⚡ <span id="counter">500+</span> prompts</span>
+        </div>
+      </div>
+      <div class="hero-card reveal">
+        <div class="stat"><span>Conteúdo entregue</span><strong>Instantâneo + editável</strong></div>
+        <div class="stat"><span>Formatos</span><strong>TXT, Notion, Docs</strong></div>
+        <div class="stat"><span>Atualizações</span><strong>Incluídas</strong></div>
+        <div class="stat"><span>Suporte</span><strong>Comunidade AI Assist Club</strong></div>
+        <div style="margin-top:16px; display:flex; gap:12px; align-items:center;">
+          <div class="pill">✅ Acesso imediato</div>
+          <div class="pill">✅ Uso comercial</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- SEÇÃO: DOR / PROBLEMA -->
+  <section id="problem" style="padding: 50px 0 20px;">
+    <div class="container">
+      <h2 class="section-title reveal" style="text-align:center;">Você ainda faz isso? 😬</h2>
+      <div class="grid-3" style="margin-top:24px;">
+        <div class="feature-card reveal" style="border-color: rgba(255,82,82,0.3); background: rgba(255,82,82,0.05);">
+          <div style="font-size:26px;">❌</div>
+          <h3>Prompts vagos</h3>
+          <p class="section-subtitle">"Me ajuda a programar melhor" — e recebe uma resposta genérica e inútil.</p>
+        </div>
+        <div class="feature-card reveal" style="border-color: rgba(255,82,82,0.3); background: rgba(255,82,82,0.05);">
+          <div style="font-size:26px;">❌</div>
+          <h3>Tentativa e erro</h3>
+          <p class="section-subtitle">Perde 30 minutos reformulando o prompt até a IA entender o que você quer.</p>
+        </div>
+        <div class="feature-card reveal" style="border-color: rgba(255,82,82,0.3); background: rgba(255,82,82,0.05);">
+          <div style="font-size:26px;">❌</div>
+          <h3>Resultados meia-boca</h3>
+          <p class="section-subtitle">A IA responde algo "ok", mas nunca no nível profissional que você precisa.</p>
+        </div>
+      </div>
+      <p class="reveal" style="text-align:center; color:var(--accent-2); margin-top:24px; font-size:18px; font-weight:600;">
+        👇 Com os prompts certos, a IA vira sua melhor ferramenta de trabalho.
+      </p>
+    </div>
+  </section>
+
+  <section id="features">
+    <div class="container">
+      <h2 class="section-title reveal">Categorias que cobrem todo o seu fluxo</h2>
+      <p class="section-subtitle reveal">Prompt packs organizados por objetivos reais do mercado.</p>
+      <div class="grid-3">
+        <div class="feature-card reveal">
+          <div style="font-size:26px;">💻</div>
+          <h3>Coding & Debugging (100+)</h3>
+          <p class="section-subtitle">Arquitetura, testes, refatoração e solução rápida de bugs.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div style="font-size:26px;">✍️</div>
+          <h3>Content Creation (100+)</h3>
+          <p class="section-subtitle">Roteiros, posts, e-mails, páginas e campanhas completas.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div style="font-size:26px;">💼</div>
+          <h3>Business & Freelance (80+)</h3>
+          <p class="section-subtitle">Propostas, contratos, negociação e posicionamento.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div style="font-size:26px;">⚡</div>
+          <h3>Produtividade (80+)</h3>
+          <p class="section-subtitle">Planejamento, priorização, rotina e execução rápida.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div style="font-size:26px;">🎓</div>
+          <h3>Learning & Career (70+)</h3>
+          <p class="section-subtitle">Currículo, entrevistas, estudo e crescimento.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div style="font-size:26px;">🎨</div>
+          <h3>Design & UI/UX (70+)</h3>
+          <p class="section-subtitle">Briefing, UI kits, UX research e validação.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SEÇÃO: PREVIEW / AMOSTRA -->
+  <section id="preview" style="padding: 50px 0;">
+    <div class="container">
+      <h2 class="section-title reveal" style="text-align:center;">Veja a qualidade antes de comprar 👀</h2>
+      <p class="section-subtitle reveal" style="text-align:center;">3 exemplos reais do pack. Imagine 500+ assim.</p>
+      <div class="grid-3" style="margin-top:24px;">
+        <div class="feature-card reveal" style="border-color: rgba(0,229,255,0.3);">
+          <div style="font-size:12px; color:var(--accent-2); font-weight:600; text-transform:uppercase; letter-spacing:1px;">💻 Coding</div>
+          <h3 style="font-size:15px; margin:8px 0;">Race Condition Detector</h3>
+          <p class="section-subtitle" style="font-size:13px; line-height:1.6; font-style:italic;">"Analise este código assíncrono e identifique possíveis race conditions. Para cada uma encontrada, explique o cenário exato que causa o bug, a probabilidade de ocorrer em produção, e forneça a correção com mutex/semáforo..."</p>
+          <div class="pill" style="margin-top:8px; font-size:11px;">Prompt completo no pack</div>
+        </div>
+        <div class="feature-card reveal" style="border-color: rgba(0,229,255,0.3);">
+          <div style="font-size:12px; color:var(--accent-2); font-weight:600; text-transform:uppercase; letter-spacing:1px;">✍️ Content</div>
+          <h3 style="font-size:15px; margin:8px 0;">Calendário Editorial Completo</h3>
+          <p class="section-subtitle" style="font-size:13px; line-height:1.6; font-style:italic;">"Crie um calendário editorial de 30 dias para [plataforma] no nicho de [tema]. Para cada dia, inclua: título do post, hook de abertura, formato (carrossel/vídeo/story), hashtags estratégicas e melhor horário..."</p>
+          <div class="pill" style="margin-top:8px; font-size:11px;">Prompt completo no pack</div>
+        </div>
+        <div class="feature-card reveal" style="border-color: rgba(0,229,255,0.3);">
+          <div style="font-size:12px; color:var(--accent-2); font-weight:600; text-transform:uppercase; letter-spacing:1px;">💼 Business</div>
+          <h3 style="font-size:15px; margin:8px 0;">Proposta que Fecha Contrato</h3>
+          <p class="section-subtitle" style="font-size:13px; line-height:1.6; font-style:italic;">"Monte uma proposta comercial persuasiva para [serviço]. Inclua: resumo executivo, diagnóstico do problema do cliente, solução com entregáveis, cronograma, investimento com 3 tiers e garantia de resultados..."</p>
+          <div class="pill" style="margin-top:8px; font-size:11px;">Prompt completo no pack</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="proof">
+    <div class="container">
+      <h2 class="section-title reveal">Quem usa recomenda</h2>
+      <p class="section-subtitle reveal">Veja o que nossos clientes estão dizendo.</p>
+      <div class="testimonials">
+        <div class="testimonial reveal">"Usei os prompts de coding no meu dia a dia e minha produtividade dobrou. Economizo pelo menos 2 horas por dia em debug e code review."<br><strong>— Lucas M., Desenvolvedor Full Stack</strong></div>
+        <div class="testimonial reveal">"Os prompts de content creation salvaram meu planejamento mensal. Criei um mês inteiro de conteúdo pro Instagram em uma tarde."<br><strong>— Camila R., Social Media Manager</strong></div>
+        <div class="testimonial reveal">"Melhor investimento que fiz esse ano. Os prompts de business me ajudaram a montar 3 propostas comerciais que fecharam contrato."<br><strong>— Rafael S., Freelancer de Design</strong></div>
+      </div>
+      <!-- CTA intermediário -->
+      <div class="reveal" style="text-align:center; margin-top:32px;">
+        <a class="btn btn-primary" href="#pricing" style="font-size:16px; padding:16px 32px;">Quero esses resultados também →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- SEÇÃO: GARANTIA -->
+  <section style="padding: 40px 0;">
+    <div class="container">
+      <div class="reveal" style="text-align:center; background: rgba(0,200,83,0.08); border: 1px solid rgba(0,200,83,0.25); border-radius:20px; padding:32px; max-width:700px; margin:0 auto;">
+        <div style="font-size:48px;">🛡️</div>
+        <h3 style="margin:12px 0 8px; font-size:22px;">Garantia de 7 dias</h3>
+        <p class="section-subtitle" style="font-size:15px; max-width:500px; margin:0 auto;">Se os prompts não transformarem sua produtividade em 7 dias, devolvemos 100% do seu dinheiro. Sem perguntas.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="pricing">
+    <div class="container">
+      <div class="pricing reveal">
+        <div>
+          <h2 class="section-title">Preço único, acesso vitalício</h2>
+          <p class="section-subtitle">Leve agora e receba todas as atualizações futuras sem custo extra.</p>
+          <div class="price">R$19,90 <small>R$49,90</small></div>
+          <div style="margin-top:10px;" class="pill">💎 Oferta de lançamento</div>
+        </div>
+        <div>
+          <a class="btn btn-primary" href="https://buy.stripe.com/28E5kDakWgNgeuMa912go00" target="_blank" rel="noopener" style="font-size:16px; padding:16px 32px; width:100%;">🚀 Garantir meu acesso agora</a>
+          <p class="section-subtitle" style="margin-top:12px;">🔒 Checkout seguro • ⚡ Acesso imediato • 🛡️ Garantia 7 dias</p>
+          <div style="margin-top:16px; font-size:13px; color:var(--muted);">
+            <div>✅ 500+ prompts profissionais</div>
+            <div>✅ 6 categorias completas</div>
+            <div>✅ Atualizações vitalícias</div>
+            <div>✅ Uso comercial liberado</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="container">
+      <h2 class="section-title reveal">Perguntas frequentes</h2>
+      <div class="faq">
+        <div class="faq-item reveal">
+          <strong>Como recebo os prompts?</strong>
+          <p class="section-subtitle">Após o pagamento, você recebe acesso instantâneo ao pacote completo organizado por categorias. Basta copiar e colar no ChatGPT, Claude ou Gemini.</p>
+        </div>
+        <div class="faq-item reveal">
+          <strong>Funciona com qual IA?</strong>
+          <p class="section-subtitle">Todos os prompts funcionam com ChatGPT, Claude, Gemini e qualquer outra IA de texto. Foram testados nas principais plataformas.</p>
+        </div>
+        <div class="faq-item reveal">
+          <strong>Posso usar no meu trabalho/clientes?</strong>
+          <p class="section-subtitle">Sim! Uso comercial totalmente liberado. Use para você, seus clientes, sua equipe — sem restrições.</p>
+        </div>
+        <div class="faq-item reveal">
+          <strong>Serve para iniciantes em IA?</strong>
+          <p class="section-subtitle">Com certeza. Cada prompt tem instruções claras e campos para personalizar. É literalmente copiar, colar e adaptar.</p>
+        </div>
+        <div class="faq-item reveal">
+          <strong>E se eu não gostar?</strong>
+          <p class="section-subtitle">Sem problema. Você tem 7 dias de garantia incondicional. Se não gostar, devolvemos 100% do valor.</p>
+        </div>
+        <div class="faq-item reveal">
+          <strong>Recebo atualizações?</strong>
+          <p class="section-subtitle">Sim! Novas categorias e prompts são adicionados regularmente. Você recebe todas as atualizações futuras sem pagar nada a mais.</p>
+        </div>
+        <div class="faq-item reveal">
+          <strong>Por que R$19,90 é tão barato?</strong>
+          <p class="section-subtitle">É preço de lançamento. O valor vai subir para R$49,90 em breve. Quem compra agora garante o melhor preço e todas as atualizações.</p>
+        </div>
+        <div class="faq-item reveal">
+          <strong>Não é mais fácil pesquisar prompts no Google?</strong>
+          <p class="section-subtitle">Prompts genéricos da internet dão resultados genéricos. Nossos prompts foram criados por especialistas para extrair o máximo da IA em cenários reais de trabalho.</p>
+        </div>
+      </div>
+      <!-- CTA final -->
+      <div class="reveal" style="text-align:center; margin-top:40px;">
+        <a class="btn btn-primary" href="#pricing" style="font-size:16px; padding:16px 32px;">Garantir meu acesso por R$19,90 →</a>
+        <p class="section-subtitle" style="margin-top:12px; font-size:13px;">🛡️ Garantia de 7 dias • Preço sobe em breve</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      AI Assist Club © 2026 - Todos os direitos reservados.
+    </div>
+  </footer>
+
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+      });
+    }, { threshold: 0.2 });
+
+    document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+  </script>
+</body>
+</html>
